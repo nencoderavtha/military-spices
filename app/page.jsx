@@ -188,6 +188,54 @@ function Logo({ tone = "brown", className = "" }) {
   );
 }
 
+/* ============================================================
+   MENU DISH CARD — top-angle photo with graceful fallback.
+   Drop a JPG at /public/menu/<slug>.jpg and it appears automatically.
+   ============================================================ */
+const slugify = (s) =>
+  s.toLowerCase().replace(/[–—]/g, " ").replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
+
+function PlateIcon() {
+  return (
+    <svg viewBox="0 0 64 64" width="42" height="42" fill="none" stroke="currentColor"
+      strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      <circle cx="32" cy="32" r="19" />
+      <circle cx="32" cy="32" r="11" opacity=".55" />
+      <path d="M14 22 H8 M11 19 V25 M53 19 c3 2 3 7 0 9 M53 28 V45" opacity=".7" />
+    </svg>
+  );
+}
+
+function DishCard({ item }) {
+  const [loaded, setLoaded] = useState(false);
+  const [failed, setFailed] = useState(false);
+  const src = `/menu/${slugify(item.name)}.jpg`;
+  return (
+    <a href={itemWA(item.name)} target="_blank" rel="noopener noreferrer" className="dish reveal">
+      <div className="dish-photo">
+        <span className="dish-ph" aria-hidden="true"><PlateIcon /></span>
+        {!failed && (
+          <img
+            src={src}
+            alt={item.name}
+            loading="lazy"
+            className={`dish-img${loaded ? " is-loaded" : ""}`}
+            onLoad={() => setLoaded(true)}
+            onError={() => setFailed(true)}
+          />
+        )}
+        {item.tag && <span className="dish-tag">{item.tag}</span>}
+        <span className="dish-price">₹{item.price}<small>/{item.unit}</small></span>
+      </div>
+      <div className="dish-body">
+        <h3 className="dish-name">{item.name}</h3>
+        <p className="dish-desc">{item.desc}</p>
+        <span className="dish-order"><WhatsAppIcon size={15} /> Order on WhatsApp</span>
+      </div>
+    </a>
+  );
+}
+
 function ImagePlaceholder({ label, icon = "📷" }) {
   return (
     <div className="ph" role="img" aria-label={`${label} (image placeholder)`}>
@@ -455,29 +503,7 @@ export default function Home() {
         </div>
 
         <div className="menu-grid">
-          {MENU.map((item, i) => (
-            <a
-              key={item.name}
-              href={itemWA(item.name)}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="dish reveal"
-              style={{ transitionDelay: `${(i % 2) * 0.08}s` }}
-            >
-              <span className="dish-emoji" aria-hidden="true">{item.emoji}</span>
-              <div className="dish-body">
-                <div className="dish-top">
-                  <h3 className="dish-name">{item.name}</h3>
-                  {item.tag && <span className="dish-tag">{item.tag}</span>}
-                </div>
-                <p className="dish-desc">{item.desc}</p>
-              </div>
-              <div className="dish-foot">
-                <span className="dish-price">₹{item.price}<small>/{item.unit}</small></span>
-                <span className="dish-order"><WhatsAppIcon size={15} /> Order</span>
-              </div>
-            </a>
-          ))}
+          {MENU.map((item) => <DishCard key={item.name} item={item} />)}
         </div>
       </section>
 

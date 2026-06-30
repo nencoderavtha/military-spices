@@ -415,51 +415,54 @@ h1, h2, h3, h4 { font-family: var(--font-display); color: var(--ink); line-heigh
 .tap-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--wa-1); box-shadow: 0 0 0 4px rgba(52,196,90,.2); animation: pulse 2s ease-in-out infinite; }
 @keyframes pulse { 50% { box-shadow: 0 0 0 7px rgba(52,196,90,0); } }
 
-/* MENU */
-.menu-grid { display: grid; gap: 1rem; }
+/* MENU — photo-forward cards */
+.menu-grid { display: grid; gap: 1.1rem; }
 .dish {
-  display: grid; grid-template-columns: auto 1fr; grid-template-rows: auto auto;
-  gap: .2rem 1rem; align-items: start;
+  display: flex; flex-direction: column; overflow: hidden;
   background: var(--card); border: 1px solid rgba(58,36,16,.1);
-  border-radius: var(--radius); padding: 1.1rem 1.2rem;
-  box-shadow: var(--shadow-sm);
-  transition: transform .25s cubic-bezier(.2,.8,.2,1), box-shadow .25s ease, border-color .25s ease;
-  position: relative; overflow: hidden;
+  border-radius: 22px; box-shadow: var(--shadow-sm);
+  transition: transform .28s cubic-bezier(.2,.8,.2,1), box-shadow .28s ease, border-color .28s ease;
 }
-.dish::before {
-  content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 4px;
-  background: linear-gradient(var(--copper), var(--spice)); opacity: 0; transition: opacity .25s ease;
+.dish:hover, .dish:active { transform: translateY(-4px); box-shadow: var(--shadow); border-color: rgba(178,106,51,.45); }
+
+.dish-photo {
+  position: relative; aspect-ratio: 16 / 10; overflow: hidden;
+  background: radial-gradient(120% 120% at 30% 15%, #f0ddc1, #e2c69e);
+  display: grid; place-items: center; color: rgba(140,78,34,.45);
 }
-.dish:hover, .dish:active { transform: translateY(-3px); box-shadow: var(--shadow); border-color: rgba(178,106,51,.5); }
-.dish:hover::before { opacity: 1; }
-.dish-emoji {
-  grid-row: 1 / 3; font-size: 1.7rem; width: 48px; height: 48px;
-  display: grid; place-items: center; border-radius: 14px;
-  background: var(--bg-soft); border: 1px solid rgba(58,36,16,.1);
-}
-.dish-body { min-width: 0; }
-.dish-top { display: flex; align-items: center; gap: .5rem; flex-wrap: wrap; }
-.dish-name { font-size: 1.16rem; font-weight: 700; letter-spacing: -.01em; }
+.dish-ph { display: grid; place-items: center; }
+.dish-img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0; transition: opacity .6s ease, transform .5s cubic-bezier(.2,.8,.2,1); }
+.dish-img.is-loaded { opacity: 1; }
+.dish:hover .dish-img.is-loaded { transform: scale(1.06); }
+.dish-photo::after { content: ""; position: absolute; inset: 0; background: linear-gradient(to top, rgba(30,16,2,.22), transparent 42%); pointer-events: none; }
+
 .dish-tag {
-  font-family: var(--font-body); font-size: .62rem; font-weight: 800;
-  letter-spacing: .12em; text-transform: uppercase;
-  color: var(--spice); background: rgba(166,55,27,.1);
-  padding: .2rem .5rem; border-radius: 100px;
+  position: absolute; top: .7rem; left: .7rem; z-index: 2;
+  font-family: var(--font-body); font-size: .6rem; font-weight: 800;
+  letter-spacing: .12em; text-transform: uppercase; color: #fff;
+  background: var(--spice); padding: .32rem .6rem; border-radius: 100px;
+  box-shadow: 0 6px 14px -6px rgba(166,55,27,.85);
 }
-.dish-desc { font-size: .9rem; color: var(--ink-soft); margin-top: .25rem; line-height: 1.45; }
-.dish-foot {
-  grid-column: 1 / 3; display: flex; align-items: center; justify-content: space-between;
-  margin-top: .7rem; padding-top: .7rem; border-top: 1px dashed rgba(58,36,16,.2);
+.dish-price {
+  position: absolute; right: .7rem; bottom: .7rem; z-index: 2; line-height: 1;
+  font-family: var(--font-display); font-weight: 800; font-size: 1.18rem; color: var(--ink);
+  background: rgba(252,245,232,.95); backdrop-filter: blur(4px);
+  padding: .38rem .72rem; border-radius: 100px; box-shadow: 0 8px 18px -8px rgba(43,26,12,.55);
 }
-.dish-price { font-family: var(--font-display); font-weight: 800; font-size: 1.35rem; color: var(--ink); }
-.dish-price small { font-family: var(--font-body); font-weight: 600; font-size: .72rem; color: var(--ink-soft); }
+.dish-price small { font-family: var(--font-body); font-weight: 600; font-size: .62rem; color: var(--ink-soft); }
+
+.dish-body { padding: .95rem 1.05rem 1.1rem; display: flex; flex-direction: column; gap: .35rem; }
+.dish-name { font-size: 1.18rem; font-weight: 700; letter-spacing: -.01em; line-height: 1.15; }
+.dish-desc { font-size: .9rem; color: var(--ink-soft); line-height: 1.45; }
 .dish-order {
-  display: inline-flex; align-items: center; gap: .4rem;
-  font-size: .82rem; font-weight: 700; color: #fff;
+  display: inline-flex; align-items: center; justify-content: center; gap: .45rem;
+  margin-top: .55rem; font-size: .85rem; font-weight: 700; color: #fff;
   background: linear-gradient(180deg, var(--wa-1), var(--wa-2));
-  padding: .5rem .9rem; border-radius: 100px;
-  box-shadow: 0 8px 18px -10px rgba(18,138,60,.9);
+  padding: .68rem 1rem; border-radius: 100px;
+  box-shadow: 0 10px 20px -10px rgba(18,138,60,.9);
+  transition: filter .2s ease;
 }
+.dish:hover .dish-order { filter: brightness(1.05); }
 
 /* ============================================================
    REVIEWS — atmospheric dark band + frosted Google card
