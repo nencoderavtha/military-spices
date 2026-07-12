@@ -312,7 +312,8 @@ export default function Home() {
       if (!alive) return;
       current += (target - current) * 0.16;                 // smooth lerp for buttery scrub
       if (Math.abs(target - current) < 0.0004) current = target;
-      const t = current * (duration || 10);
+      const dur = duration || 10;
+      const t = Math.max(0, Math.min(current * dur, dur - 0.05)); // never seek to the very end (avoids 'ended' freeze)
       if (duration && Math.abs(video.currentTime - t) > 0.015) {
         try { video.currentTime = t; } catch (e) {}
       }
@@ -321,7 +322,7 @@ export default function Home() {
 
     compute();
     raf = requestAnimationFrame(tick);
-    const onScroll = () => compute();
+    const onScroll = () => { prime(); compute(); }; // prime on scroll too — wheel/keyboard scrolling never fires touch/pointer events
     window.addEventListener("scroll", onScroll, { passive: true });
     window.addEventListener("resize", compute);
     window.addEventListener("touchstart", prime, { passive: true });
