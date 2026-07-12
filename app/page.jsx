@@ -2,17 +2,16 @@
 import { useState, useEffect, useRef } from "react";
 
 /* ============================================================
-   CONFIG  —  edit before go-live
+   CONFIG  -  edit before go-live
    ============================================================ */
-const WA_PHONE = "919000000000"; // ← real WhatsApp business number (country code, no +)
-const ORDER_URL = "https://order.themilitaryspices.com";
+const WA_PHONE = "919000000000"; // real WhatsApp business number (country code, no +)
 
 const CONTACT = {
   area: "Neredmet, Hyderabad",
   address: "Neredmet Main Road, Hyderabad, Telangana",
   phone: "+91 90000 00000",
   email: "hello@themilitaryspices.in",
-  hours: "Mon–Sun · 11 AM – 11 PM",
+  hours: "Mon to Sun, 11 AM to 11 PM",
   offerPct: "10%",
   mapUrl: "https://maps.google.com/?q=Neredmet+Main+Road+Hyderabad",
 };
@@ -24,8 +23,8 @@ const GOOGLE = {
 };
 
 const waLink = (msg) => `https://wa.me/${WA_PHONE}?text=${encodeURIComponent(msg)}`;
-const WA_URL = waLink("Hi! I'd like to place an order at The Military Spices 🍖");
-const itemWA = (name) => waLink(`Hi! I'd like to order ${name} from The Military Spices 🍖`);
+const WA_URL = waLink("Hi! I'd like to place an order at The Military Spices");
+const itemWA = (name) => waLink(`Hi! I'd like to order ${name} from The Military Spices`);
 const TEL = `tel:${CONTACT.phone.replace(/\s/g, "")}`;
 
 /* ============================================================
@@ -44,16 +43,22 @@ const MARQUEE = [
 ];
 
 const MENU = [
-  { name: "Military Chicken Biryani", tag: "bestseller", price: 180, unit: "plate", desc: "Bone-in country chicken, whole spices, fried onions — served with raita.", emoji: "🍛" },
-  { name: "Mutton Pepper Fry", tag: "spicy", price: 260, unit: "½ kg", desc: "Slow-roasted with cracked pepper, garlic & curry leaves.", emoji: "🌶️" },
-  { name: "Boneless Chicken Curry", price: 160, unit: "plate", desc: "Thick masala-forward gravy — best with parotta, rice or roti.", emoji: "🍗" },
-  { name: "Spiced Chicken Sandwich", tag: "multi-cuisine", price: 110, unit: "double", desc: "Peppery shredded chicken, fresh veg & house military mayo.", emoji: "🥪" },
-  { name: "Egg Biryani", price: 120, unit: "plate", desc: "Basmati layered with masala eggs, caramelised onions & saffron.", emoji: "🥚" },
-  { name: "Fish Fry — Rohu", tag: "daily catch", price: 240, unit: "2 pcs", desc: "Marinated in turmeric, red chilli & ginger, flash-fried golden.", emoji: "🐟" },
+  { name: "Military Chicken Biryani", tag: "bestseller", price: 180, unit: "plate", desc: "Bone-in country chicken, whole spices and fried onions, served with raita." },
+  { name: "Mutton Pepper Fry", tag: "spicy", price: 260, unit: "½ kg", desc: "Slow roasted with cracked pepper, garlic and curry leaves." },
+  { name: "Boneless Chicken Curry", price: 160, unit: "plate", desc: "Thick masala gravy. Best with parotta, rice or roti." },
+  { name: "Spiced Chicken Sandwich", tag: "multi-cuisine", price: 110, unit: "double", desc: "Peppery shredded chicken, fresh veg and house military mayo." },
+  { name: "Egg Biryani", price: 120, unit: "plate", desc: "Basmati layered with masala eggs, caramelised onions and saffron." },
+  { name: "Fish Fry Rohu", tag: "daily catch", price: 240, unit: "2 pcs", desc: "Marinated in turmeric, red chilli and ginger, fried golden." },
+];
+
+const DUM_STEPS = [
+  { k: "Layered", t: "Long-grain basmati steamed over whole spices." },
+  { k: "Seared", t: "Country chicken browned hard in ghee and masala." },
+  { k: "Sealed", t: "Finished slow on dum so nothing escapes the pot." },
 ];
 
 const REVIEWS = [
-  { name: "Rohan", loc: "Neredmet", quote: "The biryani is the real deal — bold, spicy and a proper portion. My weekend go-to now." },
+  { name: "Rohan", loc: "Neredmet", quote: "The biryani is the real deal. Bold, spicy and a proper portion. My weekend go-to now." },
   { name: "Aditi", loc: "Secunderabad", quote: "Mutton pepper fry tastes just like home-style military cooking. Fresh and full of flavour." },
   { name: "Sameer", loc: "Malkajgiri", quote: "Ordered on WhatsApp, arrived hot in no time. Authentic taste, honest pricing." },
   { name: "Meera", loc: "Tarnaka", quote: "Generous portions and rich, balanced spices. Best curries in the area, easily." },
@@ -61,7 +66,6 @@ const REVIEWS = [
   { name: "Sneha", loc: "Sainikpuri", quote: "Love that I can just chat to order. Fresh, spicy, worth every rupee!" },
 ];
 
-/* Google-review card data — quotes reused with a rating + relative time */
 const GMETA = [
   { rating: 5, ago: "2 weeks ago" },
   { rating: 5, ago: "a month ago" },
@@ -84,23 +88,18 @@ function WhatsAppIcon({ size = 20 }) {
   );
 }
 const PhoneIcon = ({ size = 18 }) => (
-  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
     <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.69 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.91.33 1.85.56 2.81.69A2 2 0 0 1 22 16.92z" />
   </svg>
 );
 const PinIcon = ({ size = 18 }) => (
-  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
     <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" /><circle cx="12" cy="10" r="3" />
   </svg>
 );
 const ClockIcon = ({ size = 18 }) => (
-  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
     <circle cx="12" cy="12" r="9" /><path d="M12 7v5l3 2" />
-  </svg>
-);
-const Star = ({ size = 15 }) => (
-  <svg width={size} height={size} viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-    <path d="M12 2l2.95 5.98 6.6.96-4.77 4.65 1.13 6.57L12 17.02 6.09 20.13l1.13-6.57L2.45 8.9l6.6-.96z" />
   </svg>
 );
 
@@ -126,10 +125,10 @@ function StarBar({ value, size = "1em" }) {
   );
 }
 
-/* Google review card with auto-rotating reviews + 3D flip */
+/* Google review card with auto-rotating reviews */
 function GoogleReviewCard() {
   const [i, setI] = useState(0);
-  const [n, setN] = useState(0); // bump to retrigger flip + progress animations
+  const [n, setN] = useState(0);
 
   useEffect(() => {
     const id = setInterval(() => {
@@ -146,39 +145,37 @@ function GoogleReviewCard() {
   const r = GREVIEWS[i];
 
   return (
-    <div className="gcard-wrap">
-      <article className="gcard">
-        <header className="gc-head">
-          <span className="gc-glogo"><GoogleG size={26} /></span>
-          <div className="gc-agg">
-            <div className="gc-aggtop">
-              <b>{GOOGLE.rating}</b>
-              <StarBar value={GOOGLE.rating} size="1.05rem" />
-            </div>
-            <span className="gc-sub"><span className="gc-dot" /> GOOGLE · {GOOGLE.count} REVIEWS</span>
+    <article className="gcard">
+      <header className="gc-head">
+        <span className="gc-glogo"><GoogleG size={26} /></span>
+        <div className="gc-agg">
+          <div className="gc-aggtop">
+            <b>{GOOGLE.rating}</b>
+            <StarBar value={GOOGLE.rating} size="1.05rem" />
           </div>
-        </header>
-
-        <div className="gc-review" key={n} aria-live="polite">
-          <StarBar value={r.rating} size="1.1rem" />
-          <blockquote className="gc-quote">{r.quote}</blockquote>
-          <div className="gc-by">{r.name} · {r.loc} · {r.ago}</div>
+          <span className="gc-sub">Google, {GOOGLE.count} reviews</span>
         </div>
+      </header>
 
-        <div className="gc-prog" key={"p" + n}><i /></div>
+      <div className="gc-review" key={n} aria-live="polite">
+        <StarBar value={r.rating} size="1.05rem" />
+        <blockquote className="gc-quote">{r.quote}</blockquote>
+        <div className="gc-by">{r.name}, {r.loc} · {r.ago}</div>
+      </div>
 
-        <a className="gc-cta" href={GOOGLE.url} target="_blank" rel="noopener noreferrer">
-          Read on Google <span aria-hidden="true">↗</span>
-        </a>
-      </article>
-    </div>
+      <div className="gc-prog" key={"p" + n}><i /></div>
+
+      <a className="gc-cta" href={GOOGLE.url} target="_blank" rel="noopener noreferrer">
+        Read on Google <span aria-hidden="true">↗</span>
+      </a>
+    </article>
   );
 }
 
 /* ============================================================
-   LOGO  — masked /logo.png, recolored solid (dark brown or cream)
+   LOGO  -  masked /logo.png, recolored solid
    ============================================================ */
-function Logo({ tone = "brown", className = "" }) {
+function Logo({ tone = "bone", className = "" }) {
   return (
     <span
       className={`logo-mark logo-${tone} ${className}`}
@@ -189,19 +186,18 @@ function Logo({ tone = "brown", className = "" }) {
 }
 
 /* ============================================================
-   MENU DISH CARD — top-angle photo with graceful fallback.
+   MENU DISH CARD  -  photo with graceful fallback.
    Drop a JPG at /public/menu/<slug>.jpg and it appears automatically.
    ============================================================ */
 const slugify = (s) =>
-  s.toLowerCase().replace(/[–—]/g, " ").replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
+  s.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
 
 function PlateIcon() {
   return (
     <svg viewBox="0 0 64 64" width="42" height="42" fill="none" stroke="currentColor"
-      strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
       <circle cx="32" cy="32" r="19" />
       <circle cx="32" cy="32" r="11" opacity=".55" />
-      <path d="M14 22 H8 M11 19 V25 M53 19 c3 2 3 7 0 9 M53 28 V45" opacity=".7" />
     </svg>
   );
 }
@@ -225,24 +221,16 @@ function DishCard({ item }) {
           />
         )}
         {item.tag && <span className="dish-tag">{item.tag}</span>}
-        <span className="dish-price">₹{item.price}<small>/{item.unit}</small></span>
       </div>
       <div className="dish-body">
-        <h3 className="dish-name">{item.name}</h3>
+        <div className="dish-row">
+          <h3 className="dish-name">{item.name}</h3>
+          <span className="dish-price">₹{item.price}<small>/{item.unit}</small></span>
+        </div>
         <p className="dish-desc">{item.desc}</p>
         <span className="dish-order"><WhatsAppIcon size={15} /> Order on WhatsApp</span>
       </div>
     </a>
-  );
-}
-
-function ImagePlaceholder({ label, icon = "📷" }) {
-  return (
-    <div className="ph" role="img" aria-label={`${label} (image placeholder)`}>
-      <span className="ph-ic">{icon}</span>
-      <span className="ph-label">{label}</span>
-      <span className="ph-hint">Add photo</span>
-    </div>
   );
 }
 
@@ -257,7 +245,11 @@ export default function Home() {
   const videoRef = useRef(null);
   const bgVideoRef = useRef(null);
   const barRef = useRef(null);
-  const hintRef = useRef(null);
+
+  const dumRef = useRef(null);
+  const potRef = useRef(null);
+  const potShadowRef = useRef(null);
+  const stepRefs = useRef([]);
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 40);
@@ -281,11 +273,12 @@ export default function Home() {
     return () => io.disconnect();
   }, []);
 
-  /* scroll-scrubbed fullscreen video — maps scroll progress to video time */
+  /* scroll-scrubbed fullscreen video: maps scroll progress to video time */
   useEffect(() => {
     const track = trackRef.current;
     const video = videoRef.current;
     if (!track || !video) return;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
 
     let duration = 0, target = 0, current = 0, raf = 0, primed = false, alive = true;
 
@@ -307,7 +300,7 @@ export default function Home() {
     if (video.readyState >= 1) setDur();
     video.addEventListener("loadedmetadata", setDur);
 
-    // iOS needs a gesture to allow frame seeking — prime once, then pause
+    // iOS needs a gesture before frame seeking works: prime once, then pause
     const primeOne = (v) => {
       if (!v) return;
       const p = v.play();
@@ -325,19 +318,18 @@ export default function Home() {
       const progress = scrollable > 0 ? Math.min(1, Math.max(0, passed / scrollable)) : 0;
       target = progress;
       if (barRef.current) barRef.current.style.transform = `scaleX(${progress})`;
-      if (hintRef.current) hintRef.current.style.opacity = progress > 0.03 ? "0" : "1";
     };
 
     const tick = () => {
       if (!alive) return;
-      current += (target - current) * 0.16;                 // smooth lerp for buttery scrub
+      current += (target - current) * 0.16;
       if (Math.abs(target - current) < 0.0004) current = target;
       const dur = duration || 10;
       const t = Math.max(0, Math.min(current * dur, dur - 0.05)); // never seek to the very end (avoids 'ended' freeze)
       if (duration && Math.abs(video.currentTime - t) > 0.015) {
         try { video.currentTime = t; } catch (e) {}
       }
-      // loosely sync the blurred ambient copy — the blur hides any small drift
+      // loosely sync the blurred ambient copy: the blur hides any small drift
       if (bg && bg.src && bg.readyState >= 1 && Math.abs(bg.currentTime - t) > 0.06) {
         try { bg.currentTime = t; } catch (e) {}
       }
@@ -346,7 +338,7 @@ export default function Home() {
 
     compute();
     raf = requestAnimationFrame(tick);
-    const onScroll = () => { prime(); compute(); }; // prime on scroll too — wheel/keyboard scrolling never fires touch/pointer events
+    const onScroll = () => { prime(); compute(); }; // prime on scroll: wheel scrolling never fires touch/pointer events
     window.addEventListener("scroll", onScroll, { passive: true });
     window.addEventListener("resize", compute);
     window.addEventListener("touchstart", prime, { passive: true });
@@ -363,19 +355,72 @@ export default function Home() {
     };
   }, []);
 
+  /* 3D scroll-synced pot: turntable spin + camera tilt driven by scroll */
+  useEffect(() => {
+    const track = dumRef.current;
+    const pot = potRef.current;
+    if (!track || !pot) return;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+
+    track.classList.add("is-live");
+    let target = 0, current = 0, raf = 0, alive = true, lastStep = -1;
+
+    const compute = () => {
+      const scrollable = track.offsetHeight - window.innerHeight;
+      const passed = -track.getBoundingClientRect().top;
+      target = scrollable > 0 ? Math.min(1, Math.max(0, passed / scrollable)) : 0;
+    };
+
+    const tick = () => {
+      if (!alive) return;
+      current += (target - current) * 0.12;
+      if (Math.abs(target - current) < 0.0004) current = target;
+      const p = current;
+
+      // top-down pot: in-plane spin reads as a true turntable rotation
+      const spin = p * 300;                       // deg
+      const tilt = 26 - p * 22;                   // camera settles from 26deg to 4deg
+      const scale = 0.82 + p * 0.24;
+      pot.style.transform =
+        `perspective(1200px) rotateX(${tilt}deg) rotateZ(${spin}deg) scale(${scale})`;
+      if (potShadowRef.current) {
+        potShadowRef.current.style.transform = `translateX(-50%) scale(${0.7 + p * 0.35})`;
+        potShadowRef.current.style.opacity = `${0.55 - p * 0.2}`;
+      }
+
+      const step = Math.min(DUM_STEPS.length - 1, Math.floor(p * DUM_STEPS.length));
+      if (step !== lastStep) {
+        stepRefs.current.forEach((el, i) => el && el.classList.toggle("is-on", i === step));
+        lastStep = step;
+      }
+      raf = requestAnimationFrame(tick);
+    };
+
+    compute();
+    raf = requestAnimationFrame(tick);
+    window.addEventListener("scroll", compute, { passive: true });
+    window.addEventListener("resize", compute);
+    return () => {
+      alive = false;
+      cancelAnimationFrame(raf);
+      window.removeEventListener("scroll", compute);
+      window.removeEventListener("resize", compute);
+    };
+  }, []);
+
   const closeAnd = () => setOpen(false);
 
   return (
     <>
       {/* ===== TOP STRIP ===== */}
       <div className="topstrip">
-        <span>✦ Flat <b>{CONTACT.offerPct} off</b> on online orders · made fresh, delivered hot ✦</span>
+        <span>Flat <b>{CONTACT.offerPct} off</b> on online orders, made fresh and delivered hot</span>
       </div>
 
       {/* ===== NAV ===== */}
       <nav className={`navbar${scrolled ? " scrolled" : ""}`}>
-        <a href="#top" className="nav-logo" aria-label="The Military Spices — home" onClick={closeAnd}>
-          <Logo tone="brown" />
+        <a href="#top" className="nav-logo" aria-label="The Military Spices, home" onClick={closeAnd}>
+          <Logo tone="bone" />
         </a>
         <div className="nav-links">{NAV.map((n) => <a key={n.href} href={n.href}>{n.label}</a>)}</div>
         <a href={WA_URL} target="_blank" rel="noopener noreferrer" className="nav-order">
@@ -394,7 +439,7 @@ export default function Home() {
       {/* ===== MOBILE DRAWER ===== */}
       <div className={`drawer-scrim${open ? " show" : ""}`} onClick={closeAnd} aria-hidden={!open} />
       <aside className={`drawer${open ? " show" : ""}`} aria-hidden={!open}>
-        <div className="drawer-top"><Logo tone="cream" className="drawer-logo" /></div>
+        <div className="drawer-top"><Logo tone="bone" className="drawer-logo" /></div>
         <nav className="drawer-links">
           {NAV.map((n, i) => (
             <a key={n.href} href={n.href} onClick={closeAnd} style={{ transitionDelay: `${0.05 + i * 0.06}s` }}>
@@ -413,49 +458,36 @@ export default function Home() {
 
       {/* ===== HERO ===== */}
       <header className="hero" id="top">
-        <span className="hero-spark s1" aria-hidden="true">✦</span>
-        <span className="hero-spark s2" aria-hidden="true">✶</span>
-        <div className="hero-inner wrap">
-          <p className="hero-eyebrow fade" style={{ "--d": ".05s" }}>
-            <span className="dot" /> Neredmet · Hyderabad · since the mess kitchen
-          </p>
-
-          <h1 className="hero-title">
-            <span className="ht-l1 fade" style={{ "--d": ".12s" }}>Bold</span>
-            <span className="ht-l2 fade" style={{ "--d": ".2s" }}>Military</span>
-            <span className="ht-l3 fade" style={{ "--d": ".28s" }}>Flavours<span className="ht-amp">&amp;</span></span>
-            <span className="ht-l4 fade" style={{ "--d": ".36s" }}>Fiery <em>Spices</em></span>
-          </h1>
-
-          <p className="hero-sub fade" style={{ "--d": ".44s" }}>
-            Country-style biryanis, slow-roasted pepper fries and rich masala curries —
-            cooked fresh every single day, the proper military way.
-          </p>
-
-          <div className="hero-actions fade" style={{ "--d": ".52s" }}>
-            <a href={WA_URL} target="_blank" rel="noopener noreferrer" className="btn btn-wa btn-lg">
-              <WhatsAppIcon size={20} /> Order Now
-            </a>
-            <a href="#menu" className="btn btn-ghost btn-lg">View Menu ↓</a>
+        <div className="wrap hero-grid">
+          <div className="hero-copy">
+            <p className="hero-eyebrow fade" style={{ "--d": ".05s" }}>
+              {CONTACT.area}
+            </p>
+            <h1 className="hero-title">
+              <span className="ht-row fade" style={{ "--d": ".12s" }}>Bold</span>
+              <span className="ht-row fade" style={{ "--d": ".2s" }}>flavours.</span>
+              <span className="ht-row ht-accent fade" style={{ "--d": ".28s" }}>Military taste.</span>
+            </h1>
+            <p className="hero-sub fade" style={{ "--d": ".4s" }}>
+              Country-style biryanis, pepper fries and rich masala curries,
+              cooked fresh every day the proper military-hotel way.
+            </p>
+            <div className="hero-actions fade" style={{ "--d": ".5s" }}>
+              <a href={WA_URL} target="_blank" rel="noopener noreferrer" className="btn btn-wa btn-lg">
+                <WhatsAppIcon size={20} /> Order on WhatsApp
+              </a>
+              <a href="#menu" className="btn btn-ghost btn-lg">View the menu</a>
+            </div>
           </div>
-
-          <a href="#feast" className="hero-cue fade" style={{ "--d": ".62s" }} aria-label="Scroll to watch">
-            <span className="hero-cue-mouse"><span /></span> scroll to plate it up
-          </a>
+          <div className="hero-media fade" style={{ "--d": ".3s" }} aria-hidden="true">
+            <span className="hero-glow" />
+            <img src="/biryani.png" alt="" className="hero-pot" draggable="false" />
+          </div>
         </div>
       </header>
 
-      {/* ===== INTRO (above the video — does not overlay it) ===== */}
-      <section className="feast-intro wrap" id="feast">
-        <div className="sv-cap reveal">
-          <span className="sv-kicker">Cooked fresh · served hot</span>
-          <h2 className="sv-title">Straight from <em>the&nbsp;pot</em></h2>
-        </div>
-        <span className="sv-badge reveal"><b>{CONTACT.offerPct}</b><span>OFF</span></span>
-      </section>
-
       {/* ===== SCROLL-SCRUBBED FULLSCREEN VIDEO ===== */}
-      <section className="scrollvid" ref={trackRef}>
+      <section className="scrollvid" ref={trackRef} id="feast" aria-label="Biryani being plated, scrubbed by scroll">
         <div className="scrollvid-pin">
           <video
             ref={bgVideoRef}
@@ -478,17 +510,20 @@ export default function Home() {
           />
           <span className="sv-grad sv-top" aria-hidden="true" />
           <span className="sv-grad sv-bottom" aria-hidden="true" />
+          <div className="sv-caption">
+            <span className="sv-kicker">Cooked fresh, served hot</span>
+            <h2 className="sv-title">Straight from the pot</h2>
+          </div>
           <div className="sv-progress" aria-hidden="true"><i ref={barRef} /></div>
-          <span className="sv-hint" ref={hintRef} aria-hidden="true"><i /> keep scrolling</span>
         </div>
       </section>
 
       {/* ===== STATS ===== */}
       <section className="stats-band">
         <ul className="hero-stats wrap reveal">
-          <li><b>4.8★</b><span>Rated by locals</span></li>
-          <li><b>20+</b><span>Spices used</span></li>
-          <li><b>11–11</b><span>Open daily</span></li>
+          <li><b>{GOOGLE.rating}★</b><span>{GOOGLE.count} Google reviews</span></li>
+          <li><b>20+</b><span>Spices in the masala</span></li>
+          <li><b>11 to 11</b><span>Open every day</span></li>
         </ul>
       </section>
 
@@ -496,32 +531,58 @@ export default function Home() {
       <div className="marquee" aria-hidden="true">
         <div className="marquee-track">
           {[...MARQUEE, ...MARQUEE].map((m, i) => (
-            <span key={i} className="mq-item">{m}<i className="mq-dot">✦</i></span>
+            <span key={i} className="mq-item">{m}<i className="mq-dot" /></span>
           ))}
         </div>
       </div>
 
+      {/* ===== 3D SCROLL-SYNCED POT ===== */}
+      <section className="dum" ref={dumRef} aria-label="How the biryani is built">
+        <div className="dum-pin">
+          <div className="wrap dum-grid">
+            <div className="dum-copy">
+              <span className="kicker">The dum method</span>
+              <h2 className="h2">Built in<br />layers</h2>
+              <div className="dum-steps">
+                {DUM_STEPS.map((s, i) => (
+                  <p
+                    key={s.k}
+                    className={`dum-step${i === 0 ? " is-on" : ""}`}
+                    ref={(el) => { stepRefs.current[i] = el; }}
+                  >
+                    <b>{s.k}</b>
+                    {s.t}
+                  </p>
+                ))}
+              </div>
+            </div>
+            <div className="dum-stage" aria-hidden="true">
+              <span className="dum-shadow" ref={potShadowRef} />
+              <img src="/biryani.png" alt="" className="dum-pot" ref={potRef} draggable="false" />
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* ===== SPECIALS ===== */}
       <section className="specials" id="specials">
-        <span className="spec-spark s1" aria-hidden="true">✦</span>
-        <span className="spec-spark s2" aria-hidden="true">✶</span>
         <div className="wrap specials-inner">
           <div className="spec-copy reveal">
-            <h2 className="spec-title">The Military<br />Spices <em>Specials</em></h2>
+            <span className="kicker">House specials</span>
+            <h2 className="h2">The Military Spices <em>specials</em></h2>
             <p className="spec-text">
-              Experience bold and satisfying flavors at The Military Spices. From our signature{" "}
-              <b>military-style curries</b> and aromatic <b>biryanis</b> to tasty{" "}
-              <b>sandwiches and fast food favorites</b> — every dish is freshly prepared with rich
-              spices and quality ingredients to deliver a powerful and memorable dining experience.
+              Signature military-style curries, aromatic biryanis and quick
+              multi-cuisine favourites. Every dish is prepared fresh with rich
+              spices and honest portions.
             </p>
-            <a href={WA_URL} target="_blank" rel="noopener noreferrer" className="spec-cta">
-              <WhatsAppIcon size={18} /> Order Now
+            <a href={WA_URL} target="_blank" rel="noopener noreferrer" className="btn btn-wa">
+              <WhatsAppIcon size={18} /> Order now
             </a>
           </div>
           <div className="spec-media reveal">
             <img
               src="/specials.png"
-              alt="The Military Spices special — military-style chicken fry on a banana leaf platter with onion and lime"
+              alt="Military-style chicken fry on a banana leaf platter with onion and lime"
               className="spec-img"
             />
           </div>
@@ -532,8 +593,8 @@ export default function Home() {
       <section className="sec wrap" id="menu">
         <div className="sec-head reveal">
           <span className="kicker">Straight from the mess kitchen</span>
-          <h2 className="h2">The Menu</h2>
-          <p className="sec-note"><span className="tap-dot" /> Tap any dish to order it on WhatsApp</p>
+          <h2 className="h2">The menu</h2>
+          <p className="sec-note">Tap any dish to order it on WhatsApp</p>
         </div>
 
         <div className="menu-grid">
@@ -541,13 +602,12 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ===== REVIEWS (Google card, auto-rotating) ===== */}
+      {/* ===== REVIEWS ===== */}
       <section className="reviews-sec" id="reviews">
-        <div className="gcard-bg" aria-hidden="true" />
         <div className="wrap reviews-inner">
           <div className="sec-head reveal">
-            <span className="kicker kicker-light">Kind words</span>
-            <h2 className="h2 h2-light">What people say</h2>
+            <span className="kicker">Kind words</span>
+            <h2 className="h2">What people say</h2>
           </div>
           <div className="reveal"><GoogleReviewCard /></div>
         </div>
@@ -557,7 +617,7 @@ export default function Home() {
       <section className="sec wrap" id="visit">
         <div className="sec-head reveal">
           <span className="kicker">Come hungry</span>
-          <h2 className="h2">Visit &amp; order</h2>
+          <h2 className="h2">Visit and order</h2>
         </div>
         <div className="visit-grid">
           <a href={CONTACT.mapUrl} target="_blank" rel="noopener noreferrer" className="visit-card reveal">
@@ -570,7 +630,7 @@ export default function Home() {
           </a>
           <div className="visit-card reveal">
             <span className="vc-ic"><ClockIcon /></span>
-            <b>Open hours</b><span>{CONTACT.hours}</span><i className="vc-link">Dine-in · Takeaway · Delivery</i>
+            <b>Open hours</b><span>{CONTACT.hours}</span><i className="vc-link">Dine-in, takeaway, delivery</i>
           </div>
           <a href={WA_URL} target="_blank" rel="noopener noreferrer" className="visit-card visit-card-wa reveal">
             <span className="vc-ic"><WhatsAppIcon size={18} /></span>
@@ -583,8 +643,8 @@ export default function Home() {
       <footer className="footer">
         <div className="wrap footer-inner">
           <div className="footer-brand">
-            <Logo tone="cream" className="footer-logo" />
-            <p>Bold flavours. Military-style taste. Cooked fresh in {CONTACT.area}.</p>
+            <Logo tone="bone" className="footer-logo" />
+            <p>Bold flavours. Military style taste. Cooked fresh in {CONTACT.area}.</p>
           </div>
           <nav className="footer-links">
             {NAV.map((n) => <a key={n.href} href={n.href}>{n.label}</a>)}
@@ -595,7 +655,7 @@ export default function Home() {
             <a href={TEL}>{CONTACT.phone}</a> · <a href={`mailto:${CONTACT.email}`}>{CONTACT.email}</a><br />
             {CONTACT.hours}
           </p>
-          <p className="footer-copy">© {new Date().getFullYear()} The Military Spices · Bold Flavours. Military Style Taste.</p>
+          <p className="footer-copy">© {new Date().getFullYear()} The Military Spices. Bold flavours, military style taste.</p>
         </div>
       </footer>
 
