@@ -255,6 +255,7 @@ export default function Home() {
 
   const trackRef = useRef(null);
   const videoRef = useRef(null);
+  const bgVideoRef = useRef(null);
   const barRef = useRef(null);
   const hintRef = useRef(null);
 
@@ -288,10 +289,18 @@ export default function Home() {
 
     let duration = 0, target = 0, current = 0, raf = 0, primed = false, alive = true;
 
-    // wide screens get the sharpened 1440x2560 encode; phones keep the lighter file
-    if (window.matchMedia("(min-width: 720px)").matches && !video.src.endsWith("/biryani-hd.mp4")) {
-      video.src = "/biryani-hd.mp4";
-      video.load();
+    // wide screens: sharp HD encode up front, lighter 720p copy blurred behind it
+    // (bg video has no src in markup so phones never download it)
+    const bg = bgVideoRef.current;
+    if (window.matchMedia("(min-width: 720px)").matches) {
+      if (!video.src.endsWith("/biryani-hd.mp4")) {
+        video.src = "/biryani-hd.mp4";
+        video.load();
+      }
+      if (bg && !bg.src) {
+        bg.src = "/biryani.mp4";
+        bg.load();
+      }
     }
 
     const setDur = () => { duration = video.duration && isFinite(video.duration) ? video.duration : 10; };
@@ -299,10 +308,15 @@ export default function Home() {
     video.addEventListener("loadedmetadata", setDur);
 
     // iOS needs a gesture to allow frame seeking — prime once, then pause
+    const primeOne = (v) => {
+      if (!v) return;
+      const p = v.play();
+      if (p && p.then) p.then(() => v.pause()).catch(() => {});
+    };
     const prime = () => {
       if (primed) return; primed = true;
-      const p = video.play();
-      if (p && p.then) p.then(() => video.pause()).catch(() => {});
+      primeOne(video);
+      if (bg && bg.src) primeOne(bg);
     };
 
     const compute = () => {
@@ -322,6 +336,10 @@ export default function Home() {
       const t = Math.max(0, Math.min(current * dur, dur - 0.05)); // never seek to the very end (avoids 'ended' freeze)
       if (duration && Math.abs(video.currentTime - t) > 0.015) {
         try { video.currentTime = t; } catch (e) {}
+      }
+      // loosely sync the blurred ambient copy — the blur hides any small drift
+      if (bg && bg.src && bg.readyState >= 1 && Math.abs(bg.currentTime - t) > 0.06) {
+        try { bg.currentTime = t; } catch (e) {}
       }
       raf = requestAnimationFrame(tick);
     };
@@ -439,6 +457,15 @@ export default function Home() {
       {/* ===== SCROLL-SCRUBBED FULLSCREEN VIDEO ===== */}
       <section className="scrollvid" ref={trackRef}>
         <div className="scrollvid-pin">
+          <video
+            ref={bgVideoRef}
+            className="scrollvid-bg"
+            muted
+            playsInline
+            preload="none"
+            aria-hidden="true"
+            tabIndex={-1}
+          />
           <video
             ref={videoRef}
             className="scrollvid-video"
