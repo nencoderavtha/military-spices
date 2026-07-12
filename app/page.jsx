@@ -288,6 +288,12 @@ export default function Home() {
 
     let duration = 0, target = 0, current = 0, raf = 0, primed = false, alive = true;
 
+    // wide screens get the sharpened 1440x2560 encode; phones keep the lighter file
+    if (window.matchMedia("(min-width: 720px)").matches && !video.src.endsWith("/biryani-hd.mp4")) {
+      video.src = "/biryani-hd.mp4";
+      video.load();
+    }
+
     const setDur = () => { duration = video.duration && isFinite(video.duration) ? video.duration : 10; };
     if (video.readyState >= 1) setDur();
     video.addEventListener("loadedmetadata", setDur);
